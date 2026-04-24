@@ -5,7 +5,7 @@ export default function Home() {
         Rahul&apos;s links
       </h1>
       <p className="mt-4 text-lg text-zinc-600 dark:text-zinc-400">
-        coming soon.
+        coming very soon.
       </p>
     </main>
   );
