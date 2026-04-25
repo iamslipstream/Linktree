@@ -1,22 +1,34 @@
 import { prisma } from "@/lib/prisma";
+import { notFound } from "next/navigation";
 
-export default async function RahulPage() {
-  const links = await prisma.link.findMany({
-    where: { userId: 1 },
-    orderBy: { order: "asc" },
+export default async function PublicProfilePage({
+  params,
+}: {
+  params: Promise<{ username: string }>;
+}) {
+  const { username } = await params;
+
+  const user = await prisma.user.findUnique({
+    where: { username },
+    include: { links: { orderBy: { order: "asc" } } },
   });
+
+  if (!user) {
+    notFound();
+  }
 
   return (
     <main className="flex min-h-screen flex-col items-center bg-zinc-50 px-6 py-16 dark:bg-black">
       <h1 className="text-3xl font-semibold tracking-tight text-black dark:text-zinc-50 sm:text-4xl">
-        Rahul&apos;s links
+        {user.name ?? user.username}
       </h1>
+      <p className="mt-1 text-sm text-zinc-500">@{user.username}</p>
 
       <div className="mt-10 flex w-full max-w-md flex-col gap-3">
-        {links.length === 0 ? (
+        {user.links.length === 0 ? (
           <p className="text-center text-zinc-500">No links yet.</p>
         ) : (
-          links.map((link) => (
+          user.links.map((link) => (
             <a
               key={link.id}
               href={link.url}
